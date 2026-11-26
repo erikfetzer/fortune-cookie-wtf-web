@@ -12,6 +12,20 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/icon.svg">
+<script>
+/* Vercel Web Analytics (cookieless) */
+window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};
+/* Google Analytics: skipped when the browser asks not to be tracked */
+window.fcOptOut=!!navigator.globalPrivacyControl||navigator.doNotTrack==='1'||window.doNotTrack==='1';
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments)}
+if(!window.fcOptOut){
+  var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtag/js?id=G-YKXXT2EPX8';document.head.appendChild(g);
+  gtag('js',new Date());gtag('config','G-YKXXT2EPX8');
+}
+window.fcTrack=function(name,props){try{window.va('event',{name:name,data:props||{}})}catch(e){}if(!window.fcOptOut){try{gtag('event',name,props||{})}catch(e){}}};
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -218,7 +232,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 
 <footer class="band">
   <div class="wrap">
-    <span>No analytics and no tracking. The only cookie counts your visits, and the only server call reads your city from your IP, which every site can do. Nothing is stored.</span>
+    <span>Full disclosure: this page uses Vercel Web Analytics (no cookies) and Google Analytics (cookies). Google is skipped if your browser sends Global Privacy Control or Do Not Track. Your city lookup and your ad-profile files are never stored or sent anywhere.</span>
     <span>fortunecookie.wtf</span>
   </div>
 </footer>
@@ -270,6 +284,7 @@ const lateNov=S.month===10&&S.date>=20;
 const R=[
  {p:99,w:()=>S.battery&&S.battery.level<.25&&!S.battery.charging,d:'You will soon want an outlet. Badly.',l:['Battery Status API','Lets a page read your charge level. It was used for fingerprinting and was later removed from Firefox and Safari.'],e:()=>`Your battery is at ${Math.round(S.battery.level*100)}% and not charging.`,k:'s',c:97},
  {p:96,w:()=>!!S.city,d:()=>`You will want to be somewhere other than ${S.city} soon.`,l:['IP geolocation','Your IP address maps to a city, often a neighborhood. Every server you connect to sees it.'],e:()=>`Your IP address says ${S.city}${S.regionName?', '+S.regionName:''}. I didn't ask for your location. I didn't need to.`,k:'s',c:89},
+ {p:94,w:()=>!window.fcOptOut,d:'You were right to be suspicious. This page is tracking you too.',l:['Google Analytics','The most common tracker on the web, and it runs on this page too. It sets a _ga cookie so it can recognize you next time.'],e:()=>{const n=document.cookie.split(';').map(c=>c.split('=')[0].trim()).filter(Boolean);return `Cookies on this page right now: ${n.length?n.join(', '):'none yet, give it a second'}. Turn on Global Privacy Control and this site skips Google Analytics.`},k:'s',c:100},
  {p:95,w:()=>S.hour>=23||S.hour<4,d:"You want to go to bed. You will read one more thing instead.",l:['Dayparting','Pricing and showing ads differently depending on the hour.'],e:()=>`It's ${S.time} where you are. Your browser's clock told me.`,k:'s',c:93},
  {p:90,w:()=>lateNov&&region==='America',d:'You desire leftovers, and a good excuse to leave the table.',l:['Seasonal targeting','Ad budgets spike around holidays because people in your region are predictable then.'],e:()=>`It's late November and your timezone is ${S.tz}. That's Thanksgiving and Black Friday season.`,k:'s',c:84},
  {p:88,w:()=>S.adblock,d:'You wish to be left alone online.',l:['Ad-block detection','Sites plant a fake ad and check whether it disappears, then nag you or quietly tag you.'],e:()=>'You run an ad blocker. I planted a fake ad and watched it vanish.',k:'s',c:91},
@@ -311,7 +326,7 @@ const renderDeck=()=>{
   $('deck').innerHTML=deal.map(r=>{const [kl,kc]=KIND[r.k];return `<button class="slipcard" type="button" aria-pressed="false"><div class="inner">
   <div class="face front"><h3>${esc(txt(r))}</h3><div class="meta"><span>Certainty ${r.c}%</span><span>Flip it</span></div></div>
   <div class="face back"><div style="display:flex;justify-content:space-between;align-items:start;gap:10px"><span class="learn">Learn tracker-speak<b>${esc(r.l[0])}</b></span><span class="tag ${kc}">${kl}</span></div><p>${esc(r.l[1])}</p><p style="color:var(--gold)">${esc(r.e())}</p></div></div></button>`}).join('');
-  [...document.querySelectorAll('.slipcard')].forEach(b=>b.addEventListener('click',()=>{b.classList.toggle('on');b.setAttribute('aria-pressed',b.classList.contains('on'))}));
+  [...document.querySelectorAll('.slipcard')].forEach(b=>b.addEventListener('click',()=>{b.classList.toggle('on');b.setAttribute('aria-pressed',b.classList.contains('on'));if(b.classList.contains('on')&&window.fcTrack)fcTrack('slip_flipped')}));
 };
 const renderLedger=()=>{
   const rows=[
@@ -333,6 +348,7 @@ const renderLedger=()=>{
    ['Privacy signals',[S.gpc&&'Global Privacy Control',S.dnt&&'Do Not Track'].filter(Boolean).join(', ')||'None','Legally binding in some states, ignored by many sites'],
    ['Came from',S.ref||'Direct or hidden','Attribution: which ad or post sent you'],
    ['Visits here',`${S.visits}`,'First-party cookie, allowed everywhere'],
+   ['Trackers on this page',window.fcOptOut?'Vercel Web Analytics (Google skipped: you opted out)':'Google Analytics, Vercel Web Analytics','Yes, this page too: counting visits and which fortunes get cracked'],
    ['Fingerprint',S.fp,'Combine all of the above and you often get an ID that survives clearing your cookies']
   ];
   $('ledger').innerHTML=rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('');
@@ -342,13 +358,13 @@ pick(false);renderAll();
 
 /* cracking */
 const stage=$('stage');
-const crack=()=>{if(!stage.classList.contains('cracked')){stage.classList.remove('whole');stage.classList.add('cracked')}};
+const crack=()=>{if(!stage.classList.contains('cracked')){stage.classList.remove('whole');stage.classList.add('cracked');window.fcTrack&&fcTrack('cookie_cracked',{fortune:main&&main.l?main.l[0]:''})}};
 $('crack').addEventListener('click',crack);
 $('cookie').addEventListener('click',crack);
 $('cookie').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();crack()}});
 $('another').addEventListener('click',()=>{
   stage.classList.remove('cracked');stage.classList.add('whole');
-  pick(true);renderSlip();renderDeck();
+  pick(true);renderSlip();renderDeck();window.fcTrack&&fcTrack('another_cookie');
   setTimeout(crack,S.reduced?0:900);
 });
 
@@ -396,8 +412,8 @@ const renderRoast=(items,isSample)=>{
   <div class="chips">${items.slice(0,60).map(i=>`<span>${esc(i)}</span>`).join('')}${items.length>60?`<span>+${items.length-60} more</span>`:''}</div>
   <ol>${sh.slice(0,5).map((x,i)=>`<li>${esc(ROASTS[i%ROASTS.length](x))}</li>`).join('')}</ol>`;
 };
-$('readIt').addEventListener('click',async()=>{const list=$('paste').value.split(/\n|,/).map(s=>s.trim()).filter(Boolean);renderRoast(await readProfile(list),false)});
-$('sample').addEventListener('click',()=>{$('paste').value=SAMPLE.join('\n');renderRoast(SAMPLE,true)});
+$('readIt').addEventListener('click',async()=>{const list=$('paste').value.split(/\n|,/).map(s=>s.trim()).filter(Boolean);const items=await readProfile(list);renderRoast(items,false);window.fcTrack&&fcTrack('ad_profile_read',{count:items.length,files:$('files').files.length})});
+$('sample').addEventListener('click',()=>{$('paste').value=SAMPLE.join('\n');renderRoast(SAMPLE,true);window.fcTrack&&fcTrack('sample_profile')});
 renderRoast(SAMPLE,true);
 }
 </script>
