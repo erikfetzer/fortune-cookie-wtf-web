@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>fortunecookie.wtf</title>
+<meta name="description" content="Crack open a fortune cookie and find out what you want, using only what your browser already gives away.">
+<meta name="theme-color" content="#b3121f">
+<meta property="og:title" content="fortunecookie.wtf">
+<meta property="og:description" content="Open the cookie. It already knows what you want.">
+<meta property="og:url" content="https://fortunecookie.wtf">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE occasion: a takeout-counter joke that turns into a privacy exposé
+   IDEA a fortune cookie: crack it, pull the slip, flip it for the "learn a word" side, here tracker-speak
+   PICTURE one big golden cookie that splits in two and unrolls a paper slip with your fortune and lucky numbers
+   COLOUR lacquer red ground, white slip paper, red slip ink, cookie gold, near-black for the back of slips
+   TYPE Bagel Fat One for the sign + Work Sans for slips and text
+   LAYOUT laptop: sign across the top, cookie stage full width beneath; deck of slips in two columns; phone: stacked */
+:root{color-scheme:light;--bg:#b3121f;--deep:#7c0a14;--night:#1f0b0d;--paper:#fffdf8;--slip:#c8102e;--gold:#e9a646;--ink:#fff4ec;--muted:#ffd2c8;--cardink:#2a0d10}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "Work Sans",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Bagel Fat One","Work Sans",sans-serif;font-weight:400;line-height:1.05;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(42px,7vw,84px)}
+h2{font-size:clamp(30px,4vw,44px)}
+p{margin:0 0 12px}
+.band{padding-block:clamp(28px,4vw,64px);padding-inline:max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+.hero{background:radial-gradient(90% 70% at 50% 70%,#d3202f 0%,var(--bg) 55%,var(--deep) 100%);padding-bottom:clamp(20px,3vw,40px)}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:16px}
+.top p{color:var(--muted);font-size:17px;max-width:32em;margin:0}
+.stage{position:relative;max-width:900px;margin:8px auto 0;aspect-ratio:5/3}
+.stage svg{position:absolute;inset:0;width:100%;height:100%}
+.half{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.whole .half{animation:wiggle 3.2s ease-in-out infinite}
+@keyframes wiggle{0%,86%,100%{transform:rotate(0)}90%{transform:rotate(-2deg)}94%{transform:rotate(2deg)}}
+.cracked .left{transform:translate(-120px,26px) rotate(-16deg)}
+.cracked .right{transform:translate(120px,26px) rotate(16deg)}
+.half{transform-box:view-box;transform-origin:300px 200px}
+.crumbs{opacity:0;transition:opacity .6s .4s}
+.cracked .crumbs{opacity:1}
+.slip{position:absolute;left:50%;top:44%;width:min(86%,640px);transform:translate(-50%,-50%) scaleX(0);transform-origin:center;background:var(--paper);color:var(--slip);border-radius:3px;padding:clamp(12px,2.4vw,22px) clamp(14px,3vw,30px);box-shadow:0 10px 0 #0000002a;transition:transform .7s .35s cubic-bezier(.2,.8,.2,1);text-align:center}
+.cracked .slip{transform:translate(-50%,-50%) scaleX(1)}
+.slip .f{font:700 clamp(17px,2.6vw,26px)/1.25 "Work Sans",sans-serif;margin:0 0 10px;text-wrap:balance}
+.lucky{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;font-size:clamp(13px,1.6vw,15px);color:#6b1520}
+.lucky b{font-variant-numeric:tabular-nums;color:var(--slip)}
+.lucky span{white-space:nowrap}
+.crackbtn{position:absolute;left:50%;bottom:4%;transform:translateX(-50%)}
+.cracked .crackbtn{display:none}
+.after{display:none;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:6px}
+.cracked + .after{display:flex}
+.btn{font:700 16px "Work Sans",sans-serif;min-height:44px;padding:10px 22px;border-radius:999px;border:2px solid var(--gold);background:var(--gold);color:var(--night);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:hover{filter:brightness(1.08)}
+.btn:focus-visible,.slipcard:focus-visible,textarea:focus-visible,#cookie:focus-visible{outline:3px solid var(--paper);outline-offset:3px}
+#cookie{cursor:pointer}
+.reading{background:var(--deep)}
+.head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px;margin-bottom:24px}
+.head p{color:var(--muted);max-width:36em;margin:0}
+.deck{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.slipcard{perspective:1200px;background:none;border:0;padding:0;text-align:left;cursor:pointer;font:inherit;color:inherit;min-height:214px}
+.inner{position:relative;height:100%;min-height:214px;transition:transform .6s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.slipcard.on .inner{transform:rotateX(180deg)}
+.face{position:absolute;inset:0;border-radius:3px;padding:18px 22px;backface-visibility:hidden;display:flex;flex-direction:column;gap:8px}
+.front{background:var(--paper);color:var(--slip);box-shadow:0 6px 0 #00000030}
+.front h3{font:700 clamp(18px,1.9vw,21px)/1.3 "Work Sans",sans-serif;text-wrap:balance}
+.meta{margin-top:auto;display:flex;justify-content:space-between;gap:10px;font-size:13px;color:#7a2530}
+.back{background:var(--night);color:var(--ink);transform:rotateX(180deg);box-shadow:0 6px 0 #00000030}
+.learn{font-size:13px;color:var(--gold)}
+.learn b{display:block;font:400 21px "Bagel Fat One",sans-serif;color:var(--ink);margin-top:2px}
+.back p{font-size:15px;margin:0}
+.tag{font-size:13px;font-weight:700;padding:2px 10px;border-radius:999px;background:#f6d7d0;color:#7a0c14;white-space:nowrap}
+.tag.guess{background:#ffe7bf;color:#6a3b00}
+.tag.theater{background:#e8e2f2;color:#3b2a55}
+.watch{display:grid;grid-template-columns:repeat(auto-fit,minmax(9em,1fr));gap:14px;margin-top:22px;padding:18px;border-radius:10px;background:#00000026}
+.watch div{font-size:13px;color:var(--muted)}
+.watch b{display:block;font:700 22px "Work Sans",sans-serif;color:var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
+.note{font-size:13px;color:var(--muted)}
+.ledger{background:var(--night)}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-size:13px;color:var(--muted);font-weight:500;padding:8px 10px;border-bottom:1px solid #5a1a20}
+td{padding:10px;border-bottom:1px solid #3a1418;vertical-align:top}
+td:nth-child(2){color:var(--gold);font-weight:700;overflow-wrap:anywhere}
+td:nth-child(3){color:var(--muted)}
+.lvl2{background:var(--paper);color:var(--cardink)}
+.lvl2 h2{color:var(--slip)}
+.lvl2 .head p{color:#5d3a40}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:clamp(20px,4vw,48px)}
+.lvl2 ol{margin:0 0 18px;padding-left:20px}
+.lvl2 li{margin-bottom:8px}
+.lvl2 a{color:var(--slip)}
+textarea{width:100%;min-height:120px;font:16px "Work Sans",sans-serif;padding:12px;border-radius:8px;border:1px solid #d9b9a8;background:#fff;color:var(--cardink);resize:vertical}
+.drop{display:block;border:2px dashed #d9b9a8;border-radius:10px;padding:16px;text-align:center;margin-bottom:12px;cursor:pointer;font-weight:500}
+.drop input{display:block;margin:8px auto 0;font:14px "Work Sans",sans-serif;max-width:100%}
+.lvl2 .btn{border-color:var(--slip);background:var(--slip);color:#fff}
+.lvl2 .btn.ghost{background:transparent;color:var(--slip)}
+.roast{background:var(--bg);color:var(--ink);border-radius:10px;padding:22px}
+.roast h3{font-size:26px;margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 16px}
+.chips span{font-size:13px;padding:4px 10px;border-radius:999px;background:#ffffff22}
+.roast li{margin-bottom:10px}
+footer{background:var(--night);color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+@media(prefers-reduced-motion:reduce){.half,.slip,.inner,.crumbs{transition:none}.whole .half{animation:none}}
+@media(max-width:760px){.deck,.cols{grid-template-columns:minmax(0,1fr)}.stage{aspect-ratio:4/3}}
+@media(max-width:540px){table{font-size:13px}th,td{padding:6px 4px}
+.stage{aspect-ratio:auto;display:flex;flex-direction:column;align-items:center}
+.stage svg{position:relative;inset:auto;height:auto;aspect-ratio:5/3}
+.cracked .left{transform:translate(-70px,10px) rotate(-14deg)}.cracked .right{transform:translate(70px,10px) rotate(14deg)}
+.slip{position:relative;left:auto;top:auto;width:100%;margin-top:-18px;transform:scaleY(0);transform-origin:top;max-height:0;padding-block:0;overflow:hidden;transition:transform .6s .3s,max-height .6s .3s,padding .6s .3s}
+.cracked .slip{transform:none;max-height:400px;padding-block:14px}
+.crackbtn{position:static;transform:none;margin-top:4px}}
+</style>
+</head>
+<body>
+
+<section class="band hero">
+  <div class="wrap">
+    <div class="top">
+      <h1>Open the cookie.</h1>
+      <p>Your browser has been handing out cookies, and data, all day. Crack this one and I'll tell you what you want, using only what your browser already told me.</p>
+    </div>
+    <div class="stage whole" id="stage">
+      <svg viewBox="0 0 600 360" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="dough" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c56a"/><stop offset=".55" stop-color="#e9a646"/><stop offset="1" stop-color="#b8742a"/></linearGradient>
+          <linearGradient id="fold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9a5a1c"/><stop offset="1" stop-color="#d38f3a"/></linearGradient>
+          <g id="halfShape">
+            <path d="M300 92 C226 84 146 126 128 196 C116 248 160 292 222 284 C262 279 290 254 300 226 Z" fill="url(#dough)"/>
+            <path d="M300 226 C284 250 254 268 222 270 C182 272 160 250 166 222 C200 238 262 236 300 206 Z" fill="url(#fold)" opacity=".9"/>
+            <path d="M286 104 C232 104 176 134 156 182" fill="none" stroke="#fff3cf" stroke-width="6" stroke-linecap="round" opacity=".55"/>
+            <g fill="#b8742a" opacity=".55"><circle cx="210" cy="150" r="3"/><circle cx="246" cy="128" r="2.5"/><circle cx="180" cy="200" r="2.5"/><circle cx="262" cy="176" r="2"/><circle cx="226" cy="196" r="3"/></g>
+          </g>
+        </defs>
+        <ellipse cx="300" cy="320" rx="210" ry="18" fill="#00000030"/>
+        <g class="crumbs" fill="#e9a646"><circle cx="262" cy="316" r="5"/><circle cx="342" cy="322" r="4"/><circle cx="300" cy="328" r="3"/><circle cx="228" cy="324" r="3"/><path d="M370 312 l9 -4 l2 8 z"/></g>
+        <g id="cookie" role="button" tabindex="0" aria-label="Crack the fortune cookie">
+          <g class="half left"><use href="#halfShape"/></g>
+          <g class="half right"><use href="#halfShape" transform="translate(600 0) scale(-1 1)"/></g>
+        </g>
+      </svg>
+      <div class="slip" id="slip" aria-live="polite">
+        <p class="f" id="fortune"></p>
+        <div class="lucky" id="lucky"></div>
+      </div>
+      <button class="btn crackbtn" id="crack" type="button">Crack it open</button>
+    </div>
+    <div class="after">
+      <button class="btn" id="another" type="button">Another cookie</button>
+      <a class="btn ghost" href="#reading">How did it know?</a>
+    </div>
+  </div>
+</section>
+
+<section class="band reading" id="reading">
+  <div class="wrap">
+    <div class="head">
+      <h2>The rest of your fortunes</h2>
+      <p>Flip a slip for the tracker word of the day and how I guessed. Every slip admits whether it's a real inference, an educated guess or pure theater. Ad companies don't tell you which.</p>
+    </div>
+    <div class="deck" id="deck"></div>
+    <div class="watch">
+      <div><b id="wSec">0s</b>you've been here</div>
+      <div><b id="wMouse">0 cm</b>your cursor has travelled</div>
+      <div><b id="wScroll">0%</b>of the page scrolled</div>
+      <div><b id="wTabs">0</b>times you left this tab</div>
+      <div><b id="wVisit">1st</b>visit to this page</div>
+    </div>
+    <p class="note" style="margin-top:10px">Any analytics script can record all of this, and many do on every page. Some even replay your session afterward.</p>
+  </div>
+</section>
+
+<section class="band ledger">
+  <div class="wrap">
+    <div class="head">
+      <h2>The ingredients</h2>
+      <p>Everything your browser gave away just by loading this page. No permission prompt, no cookie banner.</p>
+    </div>
+    <div class="scroll"><table>
+      <thead><tr><th>Signal</th><th>Your value</th><th>What it's used for</th></tr></thead>
+      <tbody id="ledger"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="band lvl2" id="level2">
+  <div class="wrap">
+    <div class="head">
+      <h2>Level 2: the cookies they baked for you</h2>
+      <p>Sites can't read each other's cookies, but the big ad platforms will hand you the profile they built from theirs. Drop it in and I'll read it back to you. It's processed on your device and never uploaded.</p>
+    </div>
+    <div class="cols">
+      <div>
+        <ol>
+          <li><b>Meta:</b> in Accounts Center, open Your information and permissions, then Download your information. Pick "Ads information" in JSON format, then drop the files below.</li>
+          <li><b>Google:</b> open <a href="https://myadcenter.google.com" target="_blank" rel="noopener">My Ad Center</a>, copy the topics and brands it lists, and paste them below.</li>
+          <li><b>Anything else:</b> paste any list of "interests" a site says you have, one per line.</li>
+        </ol>
+        <label class="drop" for="files">Drop your exported files (JSON or HTML)
+          <input id="files" type="file" multiple accept=".json,.html,.htm,.txt">
+        </label>
+        <textarea id="paste" aria-label="Paste interests, one per line" placeholder="Paste interests here, one per line"></textarea>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px">
+          <button class="btn" id="readIt" type="button">Read my ad profile</button>
+          <button class="btn ghost" id="sample" type="button">Load the sample</button>
+        </div>
+      </div>
+      <div class="roast" id="roast" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<footer class="band">
+  <div class="wrap">
+    <span>No analytics and no tracking. The only cookie counts your visits, and the only server call reads your city from your IP, which every site can do. Nothing is stored.</span>
+    <span>fortunecookie.wtf</span>
+  </div>
+</footer>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const now=new Date();
+const ua=navigator.userAgent;
+const S={};
+S.tz=(Intl.DateTimeFormat().resolvedOptions().timeZone)||'Unknown';
+S.hour=now.getHours();S.day=now.getDay();S.month=now.getMonth();S.date=now.getDate();
+S.offset=-now.getTimezoneOffset()/60;
+S.time=now.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+S.dayName=now.toLocaleDateString('en-US',{weekday:'long'});
+S.langs=[...new Set((navigator.languages||[navigator.language]).filter(Boolean))];
+S.os=/iPhone|iPad|iPod/.test(ua)?'iOS':/Android/.test(ua)?'Android':/CrOS/.test(ua)?'ChromeOS':/Mac OS X/.test(ua)?(navigator.maxTouchPoints>1?'iPadOS':'macOS'):/Windows/.test(ua)?'Windows':/Linux/.test(ua)?'Linux':'Something unusual';
+S.browser=navigator.brave?'Brave':/Edg\//.test(ua)?'Edge':/OPR\//.test(ua)?'Opera':/Firefox\//.test(ua)?'Firefox':/Chrome\//.test(ua)?'Chrome':/Safari\//.test(ua)?'Safari':'Unknown';
+S.sw=screen.width;S.screen=screen.width+'×'+screen.height;S.dpr=window.devicePixelRatio||1;
+S.cores=navigator.hardwareConcurrency||0;S.mem=navigator.deviceMemory||0;
+S.touch=navigator.maxTouchPoints||0;S.mobile=S.touch>0&&Math.min(screen.width,screen.height)<820;
+S.dark=matchMedia('(prefers-color-scheme: dark)').matches;
+S.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+S.dnt=navigator.doNotTrack==='1'||window.doNotTrack==='1';
+S.gpc=!!navigator.globalPrivacyControl;
+const cn=navigator.connection||{};S.net=cn.effectiveType||'';S.saveData=!!cn.saveData;
+S.gpu='';
+try{const gl=document.createElement('canvas').getContext('webgl');const d=gl&&gl.getExtension('WEBGL_debug_renderer_info');S.gpu=d?gl.getParameter(d.UNMASKED_RENDERER_WEBGL):(gl?gl.getParameter(gl.RENDERER):'')}catch(e){}
+S.gpuShort=(S.gpu.match(/(Apple M\d[\w ]*|RTX ?\d+\w*|GTX ?\d+\w*|Radeon[\w ]*|Intel[\w ()]*Graphics|Iris[\w ]*|Adreno[\w ]*|Mali[\w-]*|Apple GPU)/i)||[S.gpu])[0].trim().slice(0,40);
+const fontList=['Helvetica Neue','Segoe UI','Roboto','Ubuntu','Calibri','Futura','Avenir','Menlo','Consolas','Garamond','Gill Sans','Papyrus','Comic Sans MS','Baskerville'];
+S.fonts=[];
+try{const cx=document.createElement('canvas').getContext('2d');const t='mmmmmmmmmlli10OQ';const w=f=>{cx.font='72px '+f;return cx.measureText(t).width};const bm=w('monospace'),bs=w('serif');for(const f of fontList){if(w("'"+f+"',monospace")!==bm||w("'"+f+"',serif")!==bs)S.fonts.push(f)}}catch(e){}
+S.fp='';
+try{const c=document.createElement('canvas');c.width=240;c.height=40;const x=c.getContext('2d');x.textBaseline='top';x.font="16px 'Arial'";x.fillStyle='#f60';x.fillRect(100,1,62,20);x.fillStyle='#069';x.fillText('fortunecookie.wtf 1.0',2,15);x.fillStyle='rgba(102,204,0,.7)';x.fillText('fortunecookie.wtf 1.0',4,17);
+  const str=c.toDataURL()+S.gpu+S.screen+S.tz+S.cores+S.langs.join();let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}S.fp=(h>>>0).toString(16).padStart(8,'0')}catch(e){S.fp='hidden'}
+S.visits=1;S.first='';
+try{const n=(+localStorage.getItem('fc_visits')||0)+1;localStorage.setItem('fc_visits',n);S.visits=n;S.first=localStorage.getItem('fc_first')||'';if(!S.first){S.first=now.toISOString();localStorage.setItem('fc_first',S.first)}}catch(e){}
+try{document.cookie='fc_visits='+S.visits+';max-age=31536000;SameSite=Lax'}catch(e){}
+S.ref=document.referrer?(()=>{try{return new URL(document.referrer).hostname}catch(e){return ''}})():'';
+S.adblock=false;S.battery=null;
+
+const langName=c=>{try{return new Intl.DisplayNames(['en'],{type:'language'}).of(c.split('-')[0])}catch(e){return c}};
+const region=S.tz.split('/')[0];
+const mountain=/Denver|Boise|Phoenix|Edmonton|Salt_Lake|Mountain/.test(S.tz);
+const lateNov=S.month===10&&S.date>=20;
+
+/* k: s = solid inference, g = educated guess, t = pure theater; l = tracker word of the day */
+const R=[
+ {p:99,w:()=>S.battery&&S.battery.level<.25&&!S.battery.charging,d:'You will soon want an outlet. Badly.',l:['Battery Status API','Lets a page read your charge level. It was used for fingerprinting and was later removed from Firefox and Safari.'],e:()=>`Your battery is at ${Math.round(S.battery.level*100)}% and not charging.`,k:'s',c:97},
+ {p:96,w:()=>!!S.city,d:()=>`You will want to be somewhere other than ${S.city} soon.`,l:['IP geolocation','Your IP address maps to a city, often a neighborhood. Every server you connect to sees it.'],e:()=>`Your IP address says ${S.city}${S.regionName?', '+S.regionName:''}. I didn't ask for your location. I didn't need to.`,k:'s',c:89},
+ {p:95,w:()=>S.hour>=23||S.hour<4,d:"You want to go to bed. You will read one more thing instead.",l:['Dayparting','Pricing and showing ads differently depending on the hour.'],e:()=>`It's ${S.time} where you are. Your browser's clock told me.`,k:'s',c:93},
+ {p:90,w:()=>lateNov&&region==='America',d:'You desire leftovers, and a good excuse to leave the table.',l:['Seasonal targeting','Ad budgets spike around holidays because people in your region are predictable then.'],e:()=>`It's late November and your timezone is ${S.tz}. That's Thanksgiving and Black Friday season.`,k:'s',c:84},
+ {p:88,w:()=>S.adblock,d:'You wish to be left alone online.',l:['Ad-block detection','Sites plant a fake ad and check whether it disappears, then nag you or quietly tag you.'],e:()=>'You run an ad blocker. I planted a fake ad and watched it vanish.',k:'s',c:91},
+ {p:86,w:()=>S.gpc||S.dnt,d:'You have already asked them to stop following you.',l:[S.gpc?'Global Privacy Control':'Do Not Track','A "please don\'t sell my data" signal your browser sends on every request. It\'s legally binding in a few states and ignored in plenty of places.'],e:()=>`Your browser sends ${S.gpc?'Global Privacy Control':'Do Not Track'}. Ironically, it makes your fingerprint rarer.`,k:'s',c:88},
+ {p:84,w:()=>S.visits>1,d:'You came back. You want to know how I did it.',l:['First-party cookie','A note a site leaves in your own browser. Every site is allowed to do this, and none of the blockers stop it.'],e:()=>`This is visit ${S.visits}. I left a note in your browser on ${new Date(S.first).toLocaleDateString()}.`,k:'s',c:99},
+ {p:80,w:()=>/RTX|GTX|Radeon RX|Arc A/i.test(S.gpu),d:'You want a new game. Your graphics card is bored.',l:['WebGL fingerprinting','Your graphics card names itself to any page that asks. It is one of the strongest identifiers there is.'],e:()=>`Your graphics card is a ${S.gpuShort}. That's a gamer's card.`,k:'g',c:78},
+ {p:78,w:()=>mountain,d:'You will want to be in the mountains this weekend.',l:['Geo-targeting','Guessing your location from your timezone, IP address or language, then selling ads by region.'],e:()=>`Your timezone is ${S.tz}. Lazy, but this is exactly how regional ads get targeted.`,k:'g',c:72},
+ {p:76,w:()=>S.mobile,d:"You want to put your phone down. You are reading this on your phone.",l:['Device targeting','Phone, tablet and desktop users see different ads and sometimes different prices.'],e:()=>`Touch screen, ${S.screen} display, ${S.os}.`,k:'g',c:70},
+ {p:74,w:()=>S.hour>=9&&S.hour<17&&S.day>0&&S.day<6&&!lateNov,d:'You want this to count as work.',l:['Dayparting','Pricing and showing ads differently depending on the hour.'],e:()=>`It's ${S.dayName} at ${S.time}.`,k:'g',c:81},
+ {p:72,w:()=>S.hour>=5&&S.hour<9,d:'You want coffee, and for nobody to talk to you yet.',l:['Dayparting','Pricing and showing ads differently depending on the hour.'],e:()=>`It's ${S.time}. Your clock told me.`,k:'g',c:76},
+ {p:70,w:()=>S.os==='macOS'&&S.dpr>=2,d:'You desire something beautiful and slightly overpriced.',l:['Bid adjustment','Advertisers pay more to reach Mac and iPhone users because they spend more.'],e:()=>`A Mac with a ${S.dpr}× Retina screen${/Apple M/.test(S.gpuShort)?' and an '+S.gpuShort+' chip':''}.`,k:'g',c:66},
+ {p:69,w:()=>S.os==='iOS',d:"You want a new phone. You will settle for a new case.",l:['Bid adjustment','Advertisers pay more to reach iPhone users because they spend more.'],e:()=>`${S.os}, ${S.screen} at ${S.dpr}× density. That's enough to narrow down the model.`,k:'g',c:61},
+ {p:68,w:()=>S.os==='Android',d:'You will win an argument about green bubbles.',l:['User-agent string','A label your browser attaches to every request: device, OS and browser version.'],e:()=>'Your user agent says Android.',k:'t',c:58},
+ {p:66,w:()=>S.langs.map(l=>l.split('-')[0]).filter((v,i,a)=>a.indexOf(v)===i).length>1,d:()=>`A trip to somewhere they speak ${langName(S.langs[1])} is in your future.`,l:['Accept-Language header','Your preferred languages, in order, sent to every site you visit.'],e:()=>`Your browser asks for ${S.langs.map(langName).join(', ')}, in that order.`,k:'g',c:64},
+ {p:64,w:()=>S.cores>=10,d:'You want forty tabs open, and your machine allows it.',l:['Hardware concurrency','Your CPU core count. It hints at how expensive your computer is.'],e:()=>`${S.cores} CPU cores, available to any page.`,k:'g',c:59},
+ {p:62,w:()=>S.saveData||/2g|3g/.test(S.net),d:'You want faster internet.',l:['Network Information API','Tells a page how fast your connection is. Sites use it to guess your location and income.'],e:()=>`Your connection reports as ${S.net||'data saver on'}.`,k:'s',c:90},
+ {p:60,w:()=>S.browser==='Firefox',d:'You want the internet of 2008 back.',l:['Browser sniffing','Reading which browser you use and treating you differently because of it.'],e:()=>'You chose Firefox on purpose. People who do usually have opinions.',k:'t',c:55},
+ {p:60,w:()=>S.browser==='Brave',d:'You want privacy and maybe some crypto. Ideally both.',l:['Browser sniffing','Reading which browser you use and treating you differently because of it.'],e:()=>'Brave identifies itself to any page that checks.',k:'g',c:63},
+ {p:58,w:()=>S.reduced,d:'You want things to hold still for a minute.',l:['Media queries','Your system settings, like reduce motion and dark mode, are readable by every page.'],e:()=>'You turned on "reduce motion" in your system settings.',k:'g',c:60},
+ {p:56,w:()=>S.dark,d:'You want the world a little quieter.',l:['prefers-color-scheme','Whether you use dark mode. Not much on its own, but every bit narrows down who you are.'],e:()=>"You're in dark mode. Reading personality into that is a stretch, but sites still log it.",k:'t',c:52},
+ {p:30,w:()=>true,d:'Someone will soon tell you that you made the right call.',l:['Barnum effect','Statements vague enough to fit everyone feel personal. Horoscopes run on it, and so do a few ad "insights."'],e:()=>"This one's true for nearly everyone, which is why it feels specific.",k:'t',c:50},
+ {p:29,w:()=>true,d:'You want a snack.',l:['Base rate','How common something is to begin with. Everyone wants a snack, so I am always right.'],e:()=>'No data needed.',k:'t',c:49},
+ {p:28,w:()=>true,d:'You will see an ad for the thing you already bought.',l:['Retargeting','Ads that follow you around the web after you look at, or even buy, something.'],e:()=>'Everyone has lived this one.',k:'t',c:48}
+];
+const KIND={s:['Solid inference',''],g:['Educated guess','guess'],t:['Pure theater','theater']};
+const txt=r=>typeof r.d==='function'?r.d():r.d;
+let deal=[],main=null;
+const pick=shuffle=>{
+  const ok=R.filter(r=>{try{return r.w()}catch(e){return false}});
+  ok.sort((a,b)=>(b.p+(shuffle?Math.random()*40:0))-(a.p+(shuffle?Math.random()*40:0)));
+  main=ok[0];deal=ok.slice(1,7);
+};
+const renderSlip=()=>{
+  $('fortune').textContent=txt(main);
+  const nums=[S.cores?[S.cores,'CPU cores']:null,[S.sw,'screen width'],[S.offset,'hours from UTC'],[S.hour,'the hour'],[S.visits,'visits'],S.battery?[Math.round(S.battery.level*100),'battery %']:null].filter(Boolean);
+  $('lucky').innerHTML='<span>Lucky numbers:</span>'+nums.map(n=>`<span title="${esc(n[1])}"><b>${esc(n[0])}</b> ${esc(n[1])}</span>`).join('');
+};
+const renderDeck=()=>{
+  $('deck').innerHTML=deal.map(r=>{const [kl,kc]=KIND[r.k];return `<button class="slipcard" type="button" aria-pressed="false"><div class="inner">
+  <div class="face front"><h3>${esc(txt(r))}</h3><div class="meta"><span>Certainty ${r.c}%</span><span>Flip it</span></div></div>
+  <div class="face back"><div style="display:flex;justify-content:space-between;align-items:start;gap:10px"><span class="learn">Learn tracker-speak<b>${esc(r.l[0])}</b></span><span class="tag ${kc}">${kl}</span></div><p>${esc(r.l[1])}</p><p style="color:var(--gold)">${esc(r.e())}</p></div></div></button>`}).join('');
+  [...document.querySelectorAll('.slipcard')].forEach(b=>b.addEventListener('click',()=>{b.classList.toggle('on');b.setAttribute('aria-pressed',b.classList.contains('on'))}));
+};
+const renderLedger=()=>{
+  const rows=[
+   ['Local time',`${S.dayName}, ${S.time}`,'Ad auctions price by hour and day'],
+   ['Timezone',S.tz,'Rough location without asking for it'],
+   ['Location from IP',S.city?[S.city,S.regionName,S.country].filter(Boolean).join(', '):'Not looked up','Every server you connect to can do this'],
+   ['Languages',S.langs.join(', '),'Location, background, travel targeting'],
+   ['System',`${S.os}, ${S.browser}`,'Device-based bidding: Mac and iPhone users cost more'],
+   ['Screen',`${S.screen} at ${S.dpr}×`,'Fingerprinting and guessing your device model'],
+   ['Graphics card',S.gpuShort||'Hidden','One of the strongest fingerprint signals'],
+   ['CPU cores / memory',`${S.cores||'?'} cores${S.mem?', '+S.mem+' GB+':''}`,'Device value and fingerprinting'],
+   ['Installed fonts',S.fonts.length?S.fonts.join(', '):'None detected','Fonts reveal your OS, apps and sometimes your job'],
+   ['Touch screen',S.touch?`Yes, ${S.touch} points`:'No','Phone vs. desktop targeting'],
+   ['Dark mode',S.dark?'On':'Off','Fingerprinting'],
+   ['Reduce motion',S.reduced?'On':'Off','Fingerprinting and accessibility inference'],
+   ['Connection',S.net?(S.net+(S.saveData?', data saver':'')):'Not reported','Location and income guessing'],
+   ['Battery',S.battery?`${Math.round(S.battery.level*100)}%${S.battery.charging?', charging':''}`:'Not reported','Fingerprinting and price testing'],
+   ['Ad blocker',S.adblock?'Detected':'Not detected','Nag walls, or a rarer fingerprint'],
+   ['Privacy signals',[S.gpc&&'Global Privacy Control',S.dnt&&'Do Not Track'].filter(Boolean).join(', ')||'None','Legally binding in some states, ignored by many sites'],
+   ['Came from',S.ref||'Direct or hidden','Attribution: which ad or post sent you'],
+   ['Visits here',`${S.visits}`,'First-party cookie, allowed everywhere'],
+   ['Fingerprint',S.fp,'Combine all of the above and you often get an ID that survives clearing your cookies']
+  ];
+  $('ledger').innerHTML=rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('');
+};
+const renderAll=()=>{renderSlip();renderDeck();renderLedger()};
+pick(false);renderAll();
+
+/* cracking */
+const stage=$('stage');
+const crack=()=>{if(!stage.classList.contains('cracked')){stage.classList.remove('whole');stage.classList.add('cracked')}};
+$('crack').addEventListener('click',crack);
+$('cookie').addEventListener('click',crack);
+$('cookie').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();crack()}});
+$('another').addEventListener('click',()=>{
+  stage.classList.remove('cracked');stage.classList.add('whole');
+  pick(true);renderSlip();renderDeck();
+  setTimeout(crack,S.reduced?0:900);
+});
+
+/* async signals */
+const bait=document.createElement('div');bait.className='adsbox ad-banner textads banner-ads pub_300x250';bait.style.cssText='position:absolute;left:-9999px;height:10px;width:10px';bait.innerHTML='&nbsp;';document.body.appendChild(bait);
+setTimeout(()=>{S.adblock=bait.offsetHeight===0||getComputedStyle(bait).display==='none';bait.remove();if(!stage.classList.contains('cracked')){pick(false);renderAll()}else renderLedger()},400);
+const refresh=()=>{if(!stage.classList.contains('cracked')){pick(false);renderAll()}else renderLedger()};
+if(navigator.getBattery){navigator.getBattery().then(b=>{S.battery={level:b.level,charging:b.charging};refresh()}).catch(()=>{})}
+fetch('/api/whereami').then(r=>r.ok?r.json():null).then(g=>{if(g&&g.city){S.city=g.city;S.regionName=g.region;S.country=g.country;refresh()}}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('/sw.js').catch(()=>{})}
+
+/* live watch */
+const t0=performance.now();let dist=0,lx=null,ly=null,tabs=0;
+addEventListener('pointermove',e=>{if(lx!==null)dist+=Math.hypot(e.clientX-lx,e.clientY-ly);lx=e.clientX;ly=e.clientY},{passive:true});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)tabs++});
+const ord=n=>{const t=n%100,o=n%10;return n+((t>10&&t<14)?'th':o===1?'st':o===2?'nd':o===3?'rd':'th')};
+$('wVisit').textContent=ord(S.visits);
+setInterval(()=>{
+  $('wSec').textContent=Math.round((performance.now()-t0)/1000)+'s';
+  $('wMouse').textContent=Math.round(dist/37.8)+' cm';
+  const h=document.documentElement.scrollHeight-innerHeight;$('wScroll').textContent=(h>0?Math.round(scrollY/h*100):100)+'%';
+  $('wTabs').textContent=tabs;
+},500);
+
+/* level 2 */
+const SAMPLE=['Boats','Divorce','Cast-iron cookware','Fly fishing','Personal finance','Beards','Real estate investing','Denver Broncos','Mid-century modern furniture','Online dating','CrossFit','Llamas','Whiskey','Home improvement','Cryptocurrency','Frequent travelers','Parents with teenagers (13-17)','Engaged shoppers'];
+const ROASTS=[x=>`Somebody paid money to show you an ad because of “${x}.”`,x=>`“${x}.” They're guessing, and they're guessing with confidence.`,x=>`At some point you lingered near “${x}” for two seconds, and now it's part of your profile.`,x=>`“${x}” may be on your profile only because a friend clicked something.`,x=>`If you've never cared about “${x},” congratulations, you're still a mystery to them.`,x=>`Reaching people who like “${x}” costs advertisers a few dollars per thousand. You're one of the thousand.`];
+const pullStrings=(o,out,key)=>{if(o==null)return;if(typeof o==='string'){if(/name|value|topic|interest|advertiser|title|brand/i.test(key||'')&&o.length>1&&o.length<60&&!/^https?:|^\d+$|\d{4}-\d\d-\d\d/.test(o))out.push(o.trim());return}if(Array.isArray(o)){o.forEach(v=>pullStrings(v,out,key));return}if(typeof o==='object')for(const k in o)pullStrings(o[k],out,/^(string_map_data|string_list_data|data|label_values|vec|dict|entries)$/i.test(k)?key:k)};
+const fix=s=>{try{return decodeURIComponent(escape(s))}catch(e){return s}};
+const readProfile=async list=>{
+  let items=[...list];
+  for(const f of $('files').files){
+    const t=await f.text();
+    if(/\.json$/i.test(f.name)){try{pullStrings(JSON.parse(t),items,'')}catch(e){}}
+    else if(/\.html?$/i.test(f.name)){const doc=new DOMParser().parseFromString(t,'text/html');doc.querySelectorAll('td,li,div').forEach(n=>{if(!n.children.length){const s=n.textContent.trim();if(s.length>1&&s.length<60)items.push(s)}})}
+    else items.push(...t.split(/\n/));
+  }
+  return [...new Set(items.map(s=>fix(String(s)).trim()).filter(s=>s&&s.length<60&&!/^(Name|Value|Title|Topics?|Interests?)$/i.test(s)))];
+};
+const renderRoast=(items,isSample)=>{
+  const box=$('roast');
+  if(!items.length){box.innerHTML='<h3>Nothing to read yet</h3><p>Drop a file or paste a list, then press Read my ad profile.</p>';return}
+  const sh=[...items].sort(()=>Math.random()-.5);
+  box.innerHTML=`<h3>They think you're into ${items.length} things</h3><p class="note">${isSample?'This is a sample profile, not yours.':'Read on your device from your own files. Nothing was uploaded.'}</p>
+  <div class="chips">${items.slice(0,60).map(i=>`<span>${esc(i)}</span>`).join('')}${items.length>60?`<span>+${items.length-60} more</span>`:''}</div>
+  <ol>${sh.slice(0,5).map((x,i)=>`<li>${esc(ROASTS[i%ROASTS.length](x))}</li>`).join('')}</ol>`;
+};
+$('readIt').addEventListener('click',async()=>{const list=$('paste').value.split(/\n|,/).map(s=>s.trim()).filter(Boolean);renderRoast(await readProfile(list),false)});
+$('sample').addEventListener('click',()=>{$('paste').value=SAMPLE.join('\n');renderRoast(SAMPLE,true)});
+renderRoast(SAMPLE,true);
+}
+</script>
+</body>
+</html>

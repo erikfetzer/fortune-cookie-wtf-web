@@ -1,0 +1,12 @@
+{
+  "name": "fortunecookie.wtf",
+  "short_name": "Fortune Cookie",
+  "description": "Crack open a fortune cookie and find out what you want, using only what your browser already gives away.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#b3121f",
+  "theme_color": "#b3121f",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
