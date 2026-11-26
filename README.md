@@ -8,6 +8,7 @@ Crack open a fortune cookie and it tells you what you want, using only what your
 - `api/whereami.js`: Vercel function that returns the city Vercel derives from the visitor's IP; nothing is stored
 - `sw.js`, `manifest.webmanifest`, `icon.svg` + PNG icons: PWA shell (installable, works offline)
 - `og.jpg`: 1200×630 share card
+- `privacy.html`: privacy policy for the site and the extension (served at `/privacy`; `vercel.json` turns on clean URLs)
 
 Analytics: Vercel Web Analytics (cookieless, always on) plus Google Analytics (G-YKXXT2EPX8), which loads only after the visitor accepts the cookie banner. Browsers sending GPC or Do Not Track are treated as "no" and never see the banner. Choice is stored in localStorage (fc_consent); "Cookie settings" in the footer always reopens it (GPC/DNT visitors can explicitly opt in there), and declining after accepting clears the _ga cookies. Custom events: consent_accepted, consent_declined, cookie_cracked, another_cookie, slip_flipped, fortune_shared, ad_profile_read, sample_profile.
 
@@ -25,3 +26,7 @@ The companion browser extension lives in `extension/` (excluded from the Vercel 
 ## Deploy
 
 Static site on Vercel; no framework or build command. Domain: fortunecookie.wtf.
+
+## License
+
+MIT, see `LICENSE`. Fonts bundled in the extension are under the SIL Open Font License.

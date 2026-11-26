@@ -18,9 +18,7 @@
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
 
   async function showPage() {
-    // ?tab=<id> lets the popup be opened in a normal tab for testing.
-    const forced = Number(new URLSearchParams(location.search).get('tab'));
-    const tab = forced ? await chrome.tabs.get(forced) : (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     const url = tab && tab.url ? tab.url : '';
     const list = $('pageList');
     list.textContent = '';
@@ -119,6 +117,9 @@
     if (!has) return;
     await Promise.all([showPage(), showJar()]).catch((e) => { $('fortuneSub').textContent = String(e && e.message || e); });
   }
+
+  const bname = /Firefox\//.test(navigator.userAgent) ? 'Firefox' : /Edg\//.test(navigator.userAgent) ? 'Edge' : 'Chrome';
+  document.querySelectorAll('.bname').forEach((n) => { n.textContent = bname; });
 
   $('grant').addEventListener('click', async () => {
     try { if (await chrome.permissions.request(ALL)) start(); } catch (e) {}

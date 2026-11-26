@@ -16,10 +16,18 @@ Nothing leaves the browser. There is no server and no analytics.
 - `cookies`, `webRequest`, `storage`: read cookies, observe (never block or change) requests, keep per-tab counts in session storage
 - `<all_urls>` is **optional** and requested only when the user clicks "Open the jar"
 
+## Build for the stores
+
+```
+./scripts/build-extension.sh
+```
+
+Writes `dist/cookie-jar-<version>-chrome.zip` (service worker background) and `dist/cookie-jar-<version>-firefox.zip` (background scripts, `data_collection_permissions: none`, Firefox 140+ / Android 142+). Listing copy, permission justifications and data disclosures are in `STORE_LISTING.md`; images are in `store/`. Privacy policy: https://fortunecookie.wtf/privacy#cookie-jar
+
 ## Load it in Chrome
 
 1. Go to `chrome://extensions` and turn on **Developer mode**
-2. Click **Load unpacked** and choose this `extension` folder
+2. Click **Load unpacked** and choose this `extension` folder (or `dist/chrome` after building)
 3. Pin Cookie Jar from the puzzle-piece menu, click it, then **Open the jar**
 
 Firefox: `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on** → pick `manifest.json`.

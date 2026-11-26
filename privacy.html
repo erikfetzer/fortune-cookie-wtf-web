@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy · fortunecookie.wtf</title>
+<meta name="description" content="What fortunecookie.wtf and the Cookie Jar extension read, store and send. Short version: very little, and nothing is sold.">
+<meta name="theme-color" content="#b3121f">
+<meta property="og:title" content="Privacy · fortunecookie.wtf">
+<meta property="og:image" content="https://fortunecookie.wtf/og.jpg">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* A fortune slip's fine print: one calm column of paper on the red booth */
+:root{color-scheme:light;--bg:#b3121f;--deep:#7c0a14;--night:#1f0b0d;--paper:#fffdf8;--slip:#c8102e;--gold:#e9a646;--ink:#2a0d10;--muted:#6b4a4f}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 "Work Sans",system-ui,sans-serif;overflow-x:clip}
+.top{padding:28px max(5vw,16px) 0;color:var(--paper);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;max-width:900px;margin:0 auto}
+.top a{color:var(--paper);font-weight:700;text-decoration:none}
+.top a:hover{text-decoration:underline}
+.sheet{max-width:820px;margin:20px auto 48px;background:var(--paper);border-radius:4px;box-shadow:0 10px 0 #0000002e;padding:clamp(24px,5vw,56px)}
+h1,h2{font-family:"Bagel Fat One","Work Sans",sans-serif;font-weight:400;line-height:1.08;letter-spacing:-.01em;margin:0;text-wrap:balance}
+h1{font-size:clamp(34px,5vw,48px);color:var(--slip)}
+h2{font-size:clamp(24px,3vw,30px);color:var(--slip);margin:40px 0 12px;scroll-margin-top:20px}
+h3{font-size:17px;margin:22px 0 6px}
+p,li{max-width:68ch}
+.date{color:var(--muted);margin:8px 0 24px}
+.short{background:#fbeee6;border-left:4px solid var(--slip);padding:16px 18px;border-radius:0 6px 6px 0;margin:0 0 8px}
+.short p{margin:0 0 8px}.short p:last-child{margin:0}
+ul{padding-left:20px}
+li{margin-bottom:6px}
+.scroll{overflow-x:auto;margin:10px 0 14px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th{text-align:left;font-size:13px;color:var(--muted);font-weight:500;border-bottom:1px solid #e3d2c6;padding:8px 10px}
+td{border-bottom:1px solid #f0e3da;padding:9px 10px;vertical-align:top}
+td:first-child{font-weight:700;white-space:nowrap}
+code{font-size:14px;background:#f4e7de;padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+a{color:var(--slip)}
+.toc{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 8px;font-weight:500}
+footer{text-align:center;color:#ffd2c8;font-size:14px;padding:0 16px 40px}
+footer a{color:#ffd2c8}
+@media(max-width:600px){table{font-size:13px}th,td{padding:6px 5px}td:first-child{white-space:normal}}
+</style>
+</head>
+<body>
+<div class="top"><a href="/">← fortunecookie.wtf</a><span>Privacy</span></div>
+<main class="sheet">
+  <h1>Privacy, in plain words</h1>
+  <p class="date">Effective November 26, 2026</p>
+
+  <div class="short">
+    <p><b>The short version.</b> fortunecookie.wtf reads what your browser already hands every website, shows it back to you, and stores none of it. Google Analytics only runs if you say yes. The Cookie Jar extension reads your cookies and the domains a page contacts, keeps everything on your computer, and sends nothing anywhere.</p>
+    <p>We don't sell data, share it, build profiles, or show ads. That would be a weird look for this website.</p>
+  </div>
+
+  <nav class="toc" aria-label="On this page"><a href="#website">The website</a><a href="#cookie-jar">Cookie Jar extension</a><a href="#rights">Your choices</a><a href="#contact">Contact</a></nav>
+
+  <h2 id="website">The website</h2>
+  <h3>What your browser tells the page</h3>
+  <p>To write your fortunes, the page reads signals your browser exposes to every site: time and timezone, languages, screen size, device and browser type, graphics card name, installed fonts, battery level (where supported), connection type, dark mode and similar settings, privacy signals like Global Privacy Control, and whether an ad blocker is running. All of this is read and used in your browser. None of it is sent to us or stored.</p>
+
+  <h3>Your city</h3>
+  <p>The page asks our server for the approximate city that matches your IP address, using the location headers our host (Vercel) attaches to every request. The answer goes straight back to your browser for one fortune. We don't log it or keep it.</p>
+
+  <h3>Level 2: your ad profile files</h3>
+  <p>If you drop in an ad-profile export or paste a list of interests, it's read entirely inside your browser. The files are never uploaded. Close the tab and they're gone.</p>
+
+  <h3>Analytics</h3>
+  <ul>
+    <li><b>Vercel Web Analytics</b> counts page views for everyone. It doesn't use cookies or identify you across sites.</li>
+    <li><b>Google Analytics</b> runs only after you tap "Fine, have a cookie." It sets <code>_ga</code> cookies to tell returning visitors apart. If your browser sends Global Privacy Control or Do Not Track, we treat that as a no and skip the banner. You can change your answer any time under "Cookie settings" at the bottom of the site; saying no after a yes deletes the <code>_ga</code> cookies.</li>
+    <li>We count a few actions, like cracking a cookie or flipping a fortune. When you read an ad profile we count only how many interests it had, never what they were.</li>
+  </ul>
+
+  <h3>What we store in your browser</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Name</th><th>Where</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><code>fc_visits</code></td><td>Cookie and local storage</td><td>Counts your visits so a fortune can say "you came back." Never sent to us.</td></tr>
+      <tr><td><code>fc_first</code></td><td>Local storage</td><td>The date of your first visit, for the same fortune.</td></tr>
+      <tr><td><code>fc_consent</code></td><td>Local storage</td><td>Remembers your answer to the cookie banner.</td></tr>
+      <tr><td><code>_ga</code>, <code>_ga_*</code></td><td>Cookies</td><td>Google Analytics, only if you said yes.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The site also keeps a copy of its own files on your device so it works offline. That copy contains no personal data.</p>
+
+  <h3>Sharing</h3>
+  <p>"Share my fortune" opens your device's share menu or copies text to your clipboard. Where it goes from there is up to you; we don't see it.</p>
+
+  <h2 id="cookie-jar">The Cookie Jar extension</h2>
+  <p>Cookie Jar is a browser extension that shows which companies have left cookies in your browser and which tracking companies load on the page you're viewing.</p>
+
+  <h3>What it reads</h3>
+  <ul>
+    <li><b>Your cookies</b>: their names, domains and expiry dates, to group them by company. The browser hands over cookie values too; Cookie Jar ignores them.</li>
+    <li><b>The domains each tab contacts</b>, observed (never blocked or changed) as pages load, to count tracking companies for the toolbar badge.</li>
+    <li><b>The address of the current tab</b>, only to show the site's name in the popup.</li>
+  </ul>
+
+  <h3>Where it goes</h3>
+  <p>Nowhere. Cookie Jar has no server, no account, no analytics and no remote code. Per-tab counts live in the browser's session storage and are erased when you close the browser. Nothing is transmitted, sold, shared or used for advertising, and no person ever sees it.</p>
+
+  <h3>What it changes</h3>
+  <p>Only one thing, and only when you ask: "Throw out tracker cookies" deletes cookies from known tracking domains after you confirm. It skips domains that are also apps people sign into, so you stay logged in.</p>
+
+  <h3>Permissions</h3>
+  <ul>
+    <li><b>Cookies</b>: to list and, when you ask, delete tracker cookies.</li>
+    <li><b>Web requests</b>: to see which outside domains a page contacts. Read-only.</li>
+    <li><b>Storage</b>: to keep per-tab counts until the browser closes.</li>
+    <li><b>Access to all sites</b>: optional, requested only when you tap "Open the jar." Browsers require it to read cookies and requests across sites. You can revoke it, or uninstall, at any time.</li>
+  </ul>
+
+  <h2 id="rights">Your choices</h2>
+  <ul>
+    <li>Change your Google Analytics answer under "Cookie settings" on the site.</li>
+    <li>Clear this site's data in your browser settings to remove everything listed above.</li>
+    <li>Uninstall Cookie Jar to remove it and its session data.</li>
+    <li>Because we don't keep personal data, there's nothing for us to look up, export or delete about you. Google's own controls cover Google Analytics data.</li>
+  </ul>
+  <p>The site and the extension aren't directed at children under 13, and we don't knowingly collect anything from them.</p>
+  <p>If this policy changes, we'll update it here and change the date at the top.</p>
+
+  <h2 id="contact">Contact</h2>
+  <p>Questions or concerns: open an issue at <a href="https://github.com/erikfetzer/fortune-cookie-wtf-web/issues">github.com/erikfetzer/fortune-cookie-wtf-web</a>, where the code for both the site and the extension lives.</p>
+</main>
+<footer><a href="/">Back to the cookie</a></footer>
+</body>
+</html>
