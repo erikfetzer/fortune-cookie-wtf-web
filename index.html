@@ -28,7 +28,9 @@
 window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};
 /* Google Analytics: opt-in only. Browsers sending GPC or Do Not Track count as "no" and never see the banner. */
 window.fcOptOut=!!navigator.globalPrivacyControl||navigator.doNotTrack==='1'||window.doNotTrack==='1';
-window.fcConsent=window.fcOptOut?'no':(function(){try{return localStorage.getItem('fc_consent')}catch(e){return null}})();
+window.fcStored=(function(){try{return localStorage.getItem('fc_consent')}catch(e){return null}})();
+/* an explicit yes from the visitor beats the browser-wide signal; otherwise the signal counts as no */
+window.fcConsent=window.fcStored==='yes'?'yes':(window.fcOptOut?'no':window.fcStored);
 window.dataLayer=window.dataLayer||[];
 function gtag(){dataLayer.push(arguments)}
 window.fcGA=false;
@@ -259,6 +261,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 <div class="consent" id="consent" role="dialog" aria-labelledby="consentTitle" hidden>
   <h3 id="consentTitle">This site uses cookies.</h3>
   <p>The tracking kind, not the fortune kind. Say yes and Google Analytics gets to leave one. Say no and Google just knows a little less about you.</p>
+  <p id="consentNote" hidden>Your browser already sends a "don't track me" signal, so Google Analytics is off by default. You can still let it in for this site.</p>
   <div class="row">
     <button class="btn" id="consentYes" type="button">Fine, have a cookie</button>
     <button class="btn ghost" id="consentNo" type="button">No thanks, I'm full</button>
@@ -320,8 +323,8 @@ const R=[
  {p:99,w:()=>S.battery&&S.battery.level<.25&&!S.battery.charging,d:'You will soon want an outlet. Badly.',l:['Battery Status API','Lets a page read your charge level. It was used for fingerprinting and was later removed from Firefox and Safari.'],e:()=>`Your battery is at ${Math.round(S.battery.level*100)}% and not charging.`,k:'s',c:97},
  {p:96,w:()=>!!S.city,d:()=>`You will want to be somewhere other than ${S.city} soon.`,l:['IP geolocation','Your IP address maps to a city, often a neighborhood. Every server you connect to sees it.'],e:()=>`Your IP address says ${S.city}${S.regionName?', '+S.regionName:''}. I didn't ask for your location. I didn't need to.`,k:'s',c:89},
  {p:94,w:()=>window.fcGA,d:'You took the cookie. This page is tracking you too now.',l:['Google Analytics','The most common tracker on the web. It sets a _ga cookie so it can recognize you next time.'],e:()=>{const n=document.cookie.split(';').map(c=>c.split('=')[0].trim()).filter(Boolean);return `Cookies on this page right now: ${n.length?n.join(', '):'none yet, give it a second'}. Change your mind under Cookie settings at the bottom.`},k:'s',c:100},
- {p:94,w:()=>window.fcConsent==='no'&&!window.fcOptOut,d:"You said no to the cookie. Most people don't.",l:['Consent fatigue','Banners are designed so "accept" is easiest. Most people click it just to make the banner go away.'],e:()=>'Your "no" is saved in your browser so the banner stays gone. Remembering a no takes storage too.',k:'s',c:100},
- {p:93,w:()=>window.fcOptOut,d:"Your browser said no before I could even ask.",l:['Global Privacy Control','A signal your browser sends on every request saying "don\'t sell or share my data." This site treats it as a no to cookies.'],e:()=>'You send GPC or Do Not Track, so this site never loaded Google Analytics or showed you the cookie banner.',k:'s',c:100},
+ {p:94,w:()=>window.fcStored==='no',d:"You said no to the cookie. Most people don't.",l:['Consent fatigue','Banners are designed so "accept" is easiest. Most people click it just to make the banner go away.'],e:()=>'Your "no" is saved in your browser so the banner stays gone. Remembering a no takes storage too.',k:'s',c:100},
+ {p:93,w:()=>window.fcOptOut&&!window.fcGA,d:"Your browser said no before I could even ask.",l:['Global Privacy Control','A signal your browser sends on every request saying "don\'t sell or share my data." This site treats it as a no to cookies.'],e:()=>'You send GPC or Do Not Track, so this site skipped the cookie banner and kept Google Analytics off. Cookie settings at the bottom still lets you choose.',k:'s',c:100},
  {p:95,w:()=>S.hour>=23||S.hour<4,d:"You want to go to bed. You will read one more thing instead.",l:['Dayparting','Pricing and showing ads differently depending on the hour.'],e:()=>`It's ${S.time} where you are. Your browser's clock told me.`,k:'s',c:93},
  {p:90,w:()=>lateNov&&region==='America',d:'You desire leftovers, and a good excuse to leave the table.',l:['Seasonal targeting','Ad budgets spike around holidays because people in your region are predictable then.'],e:()=>`It's late November and your timezone is ${S.tz}. That's Thanksgiving and Black Friday season.`,k:'s',c:84},
  {p:88,w:()=>S.adblock,d:'You wish to be left alone online.',l:['Ad-block detection','Sites plant a fake ad and check whether it disappears, then nag you or quietly tag you.'],e:()=>'You run an ad blocker. I planted a fake ad and watched it vanish.',k:'s',c:91},
@@ -424,7 +427,7 @@ if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.service
 const consentBox=$('consent');
 const setDisclosure=()=>{$('disclosure').textContent=window.fcGA?'Google Analytics is on because you said yes. Vercel Web Analytics (no cookies) runs for everyone. Your city lookup and ad-profile files are never stored.':'Google Analytics is off unless you say yes. Vercel Web Analytics (no cookies) runs for everyone. Your city lookup and ad-profile files are never stored.'};
 const answer=v=>{
-  const was=window.fcGA;window.fcConsent=v;
+  const was=window.fcGA;window.fcConsent=v;window.fcStored=v;
   try{localStorage.setItem('fc_consent',v)}catch(e){}
   consentBox.hidden=true;
   window.fcTrack('consent_'+(v==='yes'?'accepted':'declined'));
@@ -435,8 +438,11 @@ const answer=v=>{
 $('consentYes').addEventListener('click',()=>answer('yes'));
 $('consentNo').addEventListener('click',()=>answer('no'));
 $('cookieSettings').addEventListener('click',()=>{
-  if(window.fcOptOut){$('disclosure').textContent='Your browser sends Global Privacy Control or Do Not Track, so Google Analytics stays off. Turn that off in your browser to choose here.';return}
+  $('consentNote').hidden=!window.fcOptOut;
+  $('consentYes').textContent=window.fcGA?'Keep the cookie':(window.fcOptOut?'Let it in anyway':'Fine, have a cookie');
+  $('consentNo').textContent=window.fcGA?'Take it back':(window.fcOptOut?'Keep it off':"No thanks, I'm full");
   consentBox.hidden=false;$('consentYes').focus();
+  window.fcTrack('cookie_settings_opened');
 });
 if(!window.fcConsent){setTimeout(()=>{consentBox.hidden=false},S.reduced?0:1500)}
 setDisclosure();
