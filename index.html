@@ -139,6 +139,36 @@ textarea{width:100%;min-height:120px;font:16px "Work Sans",sans-serif;padding:12
 .roast li{margin-bottom:10px}
 footer{background:var(--night);color:var(--muted);font-size:14px}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+.lvl3{background:var(--deep)}
+.lvl3 .cols{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
+.feats{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:14px}
+.feats li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start}
+.feats .ic{width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--night);display:grid;place-items:center;font:700 15px "Work Sans",sans-serif}
+.feats b{display:block;font-size:17px}
+.feats span{color:var(--muted);font-size:15px}
+.soon{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap}
+.soon .btn[aria-disabled]{cursor:default;opacity:.85}
+.pill{font:700 13px "Work Sans",sans-serif;padding:4px 12px;border-radius:999px;background:var(--paper);color:var(--slip);white-space:nowrap}
+.mock{max-width:370px;width:100%;margin:0 auto;background:var(--bg);border-radius:12px;overflow:hidden;box-shadow:0 18px 0 #00000033,0 2px 40px #0000004d;position:relative}
+.mock .bar{display:flex;align-items:center;gap:8px;padding:12px 14px 4px;font:400 19px "Bagel Fat One",sans-serif}
+.mock .bar i{width:22px;height:22px;border-radius:6px;background:url(/icon.svg) center/cover}
+.mock .badge{margin-left:auto;font:700 12px "Work Sans",sans-serif;background:var(--slip);border:2px solid var(--paper);border-radius:999px;padding:1px 8px}
+.mock .mslip{margin:8px 12px 10px;background:var(--paper);color:var(--slip);border-radius:3px;padding:12px 14px;text-align:center;box-shadow:0 5px 0 #00000030}
+.mock .mslip b{display:block;font-size:15px;line-height:1.3}
+.mock .mslip small{color:#6b1520;font-size:12.5px}
+.mock .sec{padding:10px 14px;border-top:1px solid #ffffff22}
+.mock .sec.dk{background:var(--deep)}
+.mock h4{margin:0 0 6px;font:400 15px "Bagel Fat One",sans-serif}
+.mock .r{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:4px 0;border-bottom:1px solid #ffffff18}
+.mock .r:last-child{border-bottom:0}
+.mock .r em{font-style:normal;font-size:11.5px;padding:0 7px;border-radius:999px;background:#ffffff22;color:var(--muted);margin-left:4px;white-space:nowrap}
+.mock .r em.hot{background:var(--gold);color:var(--night)}
+.mock .r span:last-child{color:var(--gold);font-weight:700;white-space:nowrap}
+.mock .st{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;font-size:11.5px;color:var(--muted);margin-bottom:6px}
+.mock .st b{display:block;font-size:19px;color:var(--ink)}
+.mock .mbtn{margin-top:8px;text-align:center;background:var(--paper);color:var(--slip);border-radius:999px;padding:8px;font-weight:700;font-size:13px}
+.mocknote{text-align:center;font-size:13px;color:var(--muted);margin-top:14px}
+@media(max-width:760px){.lvl3 .cols{grid-template-columns:minmax(0,1fr)}}
 .consent{position:fixed;left:50%;bottom:16px;z-index:50;width:min(560px,calc(100% - 24px));transform:translateX(-50%);background:var(--paper);color:var(--cardink);border-radius:4px;padding:18px 20px 16px;box-shadow:0 12px 0 #00000033,0 2px 30px #0000004d;animation:rise .5s cubic-bezier(.2,.8,.2,1)}
 .consent[hidden]{display:none}
 .consent h3{font-size:24px;color:var(--slip);margin-bottom:6px}
@@ -254,6 +284,50 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
         </div>
       </div>
       <div class="roast" id="roast" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section class="band lvl3" id="level3">
+  <div class="wrap">
+    <div class="head">
+      <h2>Level 3: the cookie jar</h2>
+      <p>A website can only read its own cookies. A browser extension, with your permission, can read all of them. So we built one.</p>
+    </div>
+    <div class="cols">
+      <div>
+        <p style="font-size:17px;max-width:34em">Cookie Jar is a free browser extension that opens the jar for real. It shows every company that has left a cookie in your browser and who's watching on the page you're on right now. No guessing from hints this time. It reads the actual cookies.</p>
+        <ul class="feats">
+          <li><span class="ic">1</span><div><b>A live count on every page</b><span>A number on the toolbar shows how many tracking companies loaded with the page you're reading.</span></div></li>
+          <li><span class="ic">2</span><div><b>Names, not just numbers</b><span>See who they are and what they do: advertising, analytics, data brokers, and the ones that record your session like a video.</span></div></li>
+          <li><span class="ic">3</span><div><b>Your whole cookie jar</b><span>Every cookie in your browser, how many companies are behind them, and which one plans to stick around the longest.</span></div></li>
+          <li><span class="ic">4</span><div><b>Throw out the tracker cookies</b><span>One tap clears cookies from tracking companies. Your logins stay put.</span></div></li>
+          <li><span class="ic">5</span><div><b>Nothing leaves your computer</b><span>No account, no server, no analytics. It asks for access only when you tap "Open the jar," and tells you why Chrome's warning sounds scary.</span></div></li>
+        </ul>
+        <div class="soon">
+          <span class="btn" aria-disabled="true">Coming soon to Chrome and Firefox</span>
+          <span class="pill">In testing now</span>
+        </div>
+      </div>
+      <div>
+        <div class="mock" aria-label="Preview of the Cookie Jar extension">
+          <div class="bar"><i></i>Cookie Jar<span class="badge">6</span></div>
+          <div class="mslip"><b>This page just introduced you to 6 companies.</b><small>Google is here. Google is always here.</small></div>
+          <div class="sec">
+            <h4>On a news site</h4>
+            <div class="r"><span>Google<em>Advertising</em></span><span>9 requests</span></div>
+            <div class="r"><span>The Trade Desk<em>Advertising</em></span><span>4 requests</span></div>
+            <div class="r"><span>LiveRamp<em class="hot">Data broker</em></span><span>2 requests</span></div>
+            <div class="r"><span>Hotjar<em class="hot">Records your session</em></span><span>1 request</span></div>
+          </div>
+          <div class="sec dk">
+            <h4>Your whole cookie jar</h4>
+            <div class="st"><div><b>1,284</b>cookies</div><div><b>312</b>sites</div><div><b>41</b>tracking companies</div></div>
+            <div class="mbtn">Throw out 418 tracker cookies</div>
+          </div>
+        </div>
+        <p class="mocknote">Preview with sample numbers.</p>
+      </div>
     </div>
   </div>
 </section>
