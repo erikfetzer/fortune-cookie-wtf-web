@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cookie Jar</title>
+<style>
+@font-face{font-family:"Bagel";src:url(fonts/bagel-fat-one.woff2) format("woff2")}
+@font-face{font-family:"Work";src:url(fonts/work-sans-400.woff2) format("woff2");font-weight:400}
+@font-face{font-family:"Work";src:url(fonts/work-sans-700.woff2) format("woff2");font-weight:700}
+:root{--bg:#b3121f;--deep:#7c0a14;--night:#1f0b0d;--paper:#fffdf8;--slip:#c8102e;--gold:#e9a646;--ink:#fff4ec;--muted:#ffd2c8}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{width:370px;background:var(--bg);color:var(--ink);font:14px/1.45 "Work",system-ui,sans-serif}
+header{display:flex;align-items:center;gap:10px;padding:14px 16px 6px}
+header img{width:30px;height:30px;border-radius:7px}
+h1{font:400 22px/1 "Bagel",sans-serif;margin:0;letter-spacing:-.01em}
+h2{font:400 17px/1.1 "Bagel",sans-serif;margin:0 0 8px}
+.slip{margin:8px 14px 12px;background:var(--paper);color:var(--slip);border-radius:3px;padding:14px 16px;box-shadow:0 6px 0 #00000030;text-align:center}
+.slip p{margin:0;font:700 16px/1.3 "Work",sans-serif;text-wrap:balance}
+.slip small{display:block;margin-top:6px;font-size:12.5px;color:#6b1520}
+section{padding:12px 16px;border-top:1px solid #ffffff22}
+section.dark{background:var(--deep)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #ffffff18}
+.row:last-child{border-bottom:0}
+.co{font-weight:700}
+.cat{font-size:12px;padding:1px 8px;border-radius:999px;background:#ffffff22;color:var(--muted);white-space:nowrap}
+.cat.replay,.cat.data{background:var(--gold);color:var(--night)}
+.num{font-variant-numeric:tabular-nums;color:var(--gold);font-weight:700;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.stats div{font-size:12px;color:var(--muted)}
+.stats b{display:block;font:700 22px/1.1 "Work",sans-serif;color:var(--ink);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted);font-size:12.5px;margin:6px 0 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:40px;margin-top:10px;font:700 14px "Work",sans-serif;border-radius:999px;border:2px solid var(--gold);background:var(--gold);color:var(--night);cursor:pointer;padding:8px 14px}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.warn{background:var(--paper);border-color:var(--paper);color:var(--slip)}
+.btn:disabled{opacity:.6;cursor:default}
+.btn:focus-visible{outline:3px solid var(--paper);outline-offset:2px}
+footer{padding:10px 16px 14px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;background:var(--night)}
+a{color:var(--gold)}
+[hidden]{display:none!important}
+.more{font-size:12.5px;color:var(--muted);padding-top:6px}
+</style>
+</head>
+<body>
+<header>
+  <img src="icons/48.png" alt="">
+  <h1>Cookie Jar</h1>
+</header>
+
+<!-- before permission -->
+<div id="intro" hidden>
+  <div class="slip"><p>Your browser is full of cookies from companies you've never heard of.</p><small>Want to see who they are?</small></div>
+  <section>
+    <p style="margin:0">To read your cookies and see who's loading on each page, Chrome needs to let Cookie Jar look at all sites. Chrome's warning will sound scary. That's honestly the point of this whole thing.</p>
+    <p class="muted">Everything stays on your computer. Nothing is uploaded, logged or sold. There is no server: every line of code is right here in the extension for anyone to read.</p>
+    <button class="btn" id="grant" type="button">Open the jar</button>
+  </section>
+</div>
+
+<!-- after permission -->
+<div id="main" hidden>
+  <div class="slip"><p id="fortune">Reading your cookies…</p><small id="fortuneSub"></small></div>
+  <section>
+    <h2 id="pageTitle">On this page</h2>
+    <div id="pageList"></div>
+    <div class="more" id="pageMore"></div>
+  </section>
+  <section class="dark">
+    <h2>Your whole cookie jar</h2>
+    <div class="stats">
+      <div><b id="sTotal">–</b>cookies</div>
+      <div><b id="sSites">–</b>sites</div>
+      <div><b id="sCos">–</b>tracking companies</div>
+    </div>
+    <div id="jarList"></div>
+    <p class="muted" id="longest"></p>
+    <button class="btn warn" id="clean" type="button" disabled>Throw out tracker cookies</button>
+    <p class="muted" id="cleanNote">Only removes cookies from tracking companies. Sites you log into stay logged in.</p>
+  </section>
+</div>
+
+<footer>
+  <span>Nothing leaves your computer.</span>
+  <a href="https://fortunecookie.wtf" target="_blank" rel="noopener">fortunecookie.wtf</a>
+</footer>
+<script src="trackers.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

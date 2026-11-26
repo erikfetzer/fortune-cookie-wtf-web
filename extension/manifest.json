@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Cookie Jar by fortunecookie.wtf",
+  "short_name": "Cookie Jar",
+  "version": "0.1.0",
+  "description": "See every company that left a cookie in your browser, and who's watching on the page you're on. Nothing leaves your computer.",
+  "homepage_url": "https://fortunecookie.wtf",
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "action": {
+    "default_title": "Cookie Jar",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/16.png",
+      "32": "icons/32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "scripts": ["trackers.js", "background.js"]
+  },
+  "permissions": ["cookies", "storage", "webRequest"],
+  "optional_host_permissions": ["<all_urls>"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "cookie-jar@fortunecookie.wtf",
+      "strict_min_version": "128.0"
+    }
+  }
+}
