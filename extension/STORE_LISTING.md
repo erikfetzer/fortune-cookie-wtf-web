@@ -9,6 +9,7 @@ Everything to paste into the Chrome Web Store and Firefox Add-ons (AMO) forms. B
 | Homepage | https://fortunecookie.wtf |
 | Privacy policy | https://fortunecookie.wtf/privacy#cookie-jar |
 | Support | https://github.com/erikfetzer/fortune-cookie-wtf-web/issues |
+| Source code | https://github.com/erikfetzer/fortune-cookie-wtf-web (public) |
 | License | MIT (fonts: SIL OFL 1.1) |
 | Price | Free, no in-app purchases |
 
@@ -52,7 +53,7 @@ One tap (and a second to confirm) clears cookies from known tracking companies. 
 NOTHING LEAVES YOUR COMPUTER
 No account, no server, no analytics, no remote code. Cookie Jar asks for access to your sites only when you tap "Open the jar," and tells you plainly why Chrome's warning sounds scary. Per-page counts are kept in session storage and erased when you close the browser.
 
-Yes, we see the irony of asking you to trust an extension with all your cookies. That's the point. Read the privacy policy, read the code, and uninstall it the second it gets weird.
+Yes, we see the irony of asking you to trust an extension with all your cookies. That's the point. It's open source, so read the code (https://github.com/erikfetzer/fortune-cookie-wtf-web), read the privacy policy, and uninstall it the second it gets weird.
 
 Made by fortunecookie.wtf, the site that tells your fortune using only what your browser gives away.
 
