@@ -18,6 +18,10 @@ Analytics: Vercel Web Analytics (cookieless, always on) plus Google Analytics (G
 3. **The ingredients**: every signal the browser exposed
 4. **Level 2**: drop in a Meta ads export or paste Google My Ad Center topics; parsed on-device
 
+## Cookie Jar extension
+
+The companion browser extension lives in `extension/` (excluded from the Vercel deploy by `.vercelignore`). See `extension/README.md`.
+
 ## Deploy
 
 Static site on Vercel; no framework or build command. Domain: fortunecookie.wtf.
