@@ -24,17 +24,22 @@
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script>
-/* Vercel Web Analytics (cookieless) */
+/* Vercel Web Analytics: cookieless, always on */
 window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};
-/* Google Analytics: skipped when the browser asks not to be tracked */
+/* Google Analytics: opt-in only. Browsers sending GPC or Do Not Track count as "no" and never see the banner. */
 window.fcOptOut=!!navigator.globalPrivacyControl||navigator.doNotTrack==='1'||window.doNotTrack==='1';
+window.fcConsent=window.fcOptOut?'no':(function(){try{return localStorage.getItem('fc_consent')}catch(e){return null}})();
 window.dataLayer=window.dataLayer||[];
 function gtag(){dataLayer.push(arguments)}
-if(!window.fcOptOut){
+window.fcGA=false;
+window.fcLoadGA=function(){
+  if(window.fcGA||window.fcConsent!=='yes')return;
+  window.fcGA=true;
   var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtag/js?id=G-YKXXT2EPX8';document.head.appendChild(g);
   gtag('js',new Date());gtag('config','G-YKXXT2EPX8');
-}
-window.fcTrack=function(name,props){try{window.va('event',{name:name,data:props||{}})}catch(e){}if(!window.fcOptOut){try{gtag('event',name,props||{})}catch(e){}}};
+};
+window.fcLoadGA();
+window.fcTrack=function(name,props){try{window.va('event',{name:name,data:props||{}})}catch(e){}if(window.fcGA){try{gtag('event',name,props||{})}catch(e){}}};
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -132,7 +137,16 @@ textarea{width:100%;min-height:120px;font:16px "Work Sans",sans-serif;padding:12
 .roast li{margin-bottom:10px}
 footer{background:var(--night);color:var(--muted);font-size:14px}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
-@media(prefers-reduced-motion:reduce){.half,.slip,.inner,.crumbs{transition:none}.whole .half{animation:none}}
+.consent{position:fixed;left:50%;bottom:16px;z-index:50;width:min(560px,calc(100% - 24px));transform:translateX(-50%);background:var(--paper);color:var(--cardink);border-radius:4px;padding:18px 20px 16px;box-shadow:0 12px 0 #00000033,0 2px 30px #0000004d;animation:rise .5s cubic-bezier(.2,.8,.2,1)}
+.consent[hidden]{display:none}
+.consent h3{font-size:24px;color:var(--slip);margin-bottom:6px}
+.consent p{font-size:15px;margin:0 0 12px;color:#4a2a30}
+.consent .row{display:flex;flex-wrap:wrap;gap:10px}
+.consent .btn{border-color:var(--slip);background:var(--slip);color:#fff}
+.consent .btn.ghost{background:transparent;color:var(--slip)}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--gold);text-decoration:underline;cursor:pointer;min-height:24px}
+@keyframes rise{from{transform:translate(-50%,120%)}}
+@media(prefers-reduced-motion:reduce){.consent{animation:none}.half,.slip,.inner,.crumbs{transition:none}.whole .half{animation:none}}
 @media(max-width:760px){.deck,.cols{grid-template-columns:minmax(0,1fr)}.stage{aspect-ratio:4/3}}
 @media(max-width:540px){table{font-size:13px}th,td{padding:6px 4px}
 .stage{aspect-ratio:auto;display:flex;flex-direction:column;align-items:center}
@@ -242,10 +256,19 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
   </div>
 </section>
 
+<div class="consent" id="consent" role="dialog" aria-labelledby="consentTitle" hidden>
+  <h3 id="consentTitle">This site uses cookies.</h3>
+  <p>The tracking kind, not the fortune kind. Say yes and Google Analytics gets to leave one. Say no and Google just knows a little less about you.</p>
+  <div class="row">
+    <button class="btn" id="consentYes" type="button">Fine, have a cookie</button>
+    <button class="btn ghost" id="consentNo" type="button">No thanks, I'm full</button>
+  </div>
+</div>
+
 <footer class="band">
   <div class="wrap">
-    <span>Full disclosure: this page uses Vercel Web Analytics (no cookies) and Google Analytics (cookies). Google is skipped if your browser sends Global Privacy Control or Do Not Track. Your city lookup and your ad-profile files are never stored or sent anywhere.</span>
-    <span>fortunecookie.wtf</span>
+    <span id="disclosure"></span>
+    <span><button class="linkbtn" id="cookieSettings" type="button">Cookie settings</button> &nbsp; fortunecookie.wtf</span>
   </div>
 </footer>
 
@@ -296,7 +319,9 @@ const lateNov=S.month===10&&S.date>=20;
 const R=[
  {p:99,w:()=>S.battery&&S.battery.level<.25&&!S.battery.charging,d:'You will soon want an outlet. Badly.',l:['Battery Status API','Lets a page read your charge level. It was used for fingerprinting and was later removed from Firefox and Safari.'],e:()=>`Your battery is at ${Math.round(S.battery.level*100)}% and not charging.`,k:'s',c:97},
  {p:96,w:()=>!!S.city,d:()=>`You will want to be somewhere other than ${S.city} soon.`,l:['IP geolocation','Your IP address maps to a city, often a neighborhood. Every server you connect to sees it.'],e:()=>`Your IP address says ${S.city}${S.regionName?', '+S.regionName:''}. I didn't ask for your location. I didn't need to.`,k:'s',c:89},
- {p:94,w:()=>!window.fcOptOut,d:'You were right to be suspicious. This page is tracking you too.',l:['Google Analytics','The most common tracker on the web, and it runs on this page too. It sets a _ga cookie so it can recognize you next time.'],e:()=>{const n=document.cookie.split(';').map(c=>c.split('=')[0].trim()).filter(Boolean);return `Cookies on this page right now: ${n.length?n.join(', '):'none yet, give it a second'}. Turn on Global Privacy Control and this site skips Google Analytics.`},k:'s',c:100},
+ {p:94,w:()=>window.fcGA,d:'You took the cookie. This page is tracking you too now.',l:['Google Analytics','The most common tracker on the web. It sets a _ga cookie so it can recognize you next time.'],e:()=>{const n=document.cookie.split(';').map(c=>c.split('=')[0].trim()).filter(Boolean);return `Cookies on this page right now: ${n.length?n.join(', '):'none yet, give it a second'}. Change your mind under Cookie settings at the bottom.`},k:'s',c:100},
+ {p:94,w:()=>window.fcConsent==='no'&&!window.fcOptOut,d:"You said no to the cookie. Most people don't.",l:['Consent fatigue','Banners are designed so "accept" is easiest. Most people click it just to make the banner go away.'],e:()=>'Your "no" is saved in your browser so the banner stays gone. Remembering a no takes storage too.',k:'s',c:100},
+ {p:93,w:()=>window.fcOptOut,d:"Your browser said no before I could even ask.",l:['Global Privacy Control','A signal your browser sends on every request saying "don\'t sell or share my data." This site treats it as a no to cookies.'],e:()=>'You send GPC or Do Not Track, so this site never loaded Google Analytics or showed you the cookie banner.',k:'s',c:100},
  {p:95,w:()=>S.hour>=23||S.hour<4,d:"You want to go to bed. You will read one more thing instead.",l:['Dayparting','Pricing and showing ads differently depending on the hour.'],e:()=>`It's ${S.time} where you are. Your browser's clock told me.`,k:'s',c:93},
  {p:90,w:()=>lateNov&&region==='America',d:'You desire leftovers, and a good excuse to leave the table.',l:['Seasonal targeting','Ad budgets spike around holidays because people in your region are predictable then.'],e:()=>`It's late November and your timezone is ${S.tz}. That's Thanksgiving and Black Friday season.`,k:'s',c:84},
  {p:88,w:()=>S.adblock,d:'You wish to be left alone online.',l:['Ad-block detection','Sites plant a fake ad and check whether it disappears, then nag you or quietly tag you.'],e:()=>'You run an ad blocker. I planted a fake ad and watched it vanish.',k:'s',c:91},
@@ -360,7 +385,7 @@ const renderLedger=()=>{
    ['Privacy signals',[S.gpc&&'Global Privacy Control',S.dnt&&'Do Not Track'].filter(Boolean).join(', ')||'None','Legally binding in some states, ignored by many sites'],
    ['Came from',S.ref||'Direct or hidden','Attribution: which ad or post sent you'],
    ['Visits here',`${S.visits}`,'First-party cookie, allowed everywhere'],
-   ['Trackers on this page',window.fcOptOut?'Vercel Web Analytics (Google skipped: you opted out)':'Google Analytics, Vercel Web Analytics','Yes, this page too: counting visits and which fortunes get cracked'],
+   ['Trackers on this page',window.fcGA?'Google Analytics, Vercel Web Analytics':'Vercel Web Analytics only'+(window.fcOptOut?' (your browser opted out)':window.fcConsent==='no'?' (you declined Google)':' (Google waits for your OK)'),'Yes, this page too: counting visits and which fortunes get cracked'],
    ['Fingerprint',S.fp,'Combine all of the above and you often get an ID that survives clearing your cookies']
   ];
   $('ledger').innerHTML=rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('');
@@ -394,6 +419,27 @@ const refresh=()=>{if(!stage.classList.contains('cracked')){pick(false);renderAl
 if(navigator.getBattery){navigator.getBattery().then(b=>{S.battery={level:b.level,charging:b.charging};refresh()}).catch(()=>{})}
 fetch('/api/whereami').then(r=>r.ok?r.json():null).then(g=>{if(g&&g.city){S.city=g.city;S.regionName=g.region;S.country=g.country;refresh()}}).catch(()=>{});
 if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('/sw.js').catch(()=>{})}
+
+/* cookie consent */
+const consentBox=$('consent');
+const setDisclosure=()=>{$('disclosure').textContent=window.fcGA?'Google Analytics is on because you said yes. Vercel Web Analytics (no cookies) runs for everyone. Your city lookup and ad-profile files are never stored.':'Google Analytics is off unless you say yes. Vercel Web Analytics (no cookies) runs for everyone. Your city lookup and ad-profile files are never stored.'};
+const answer=v=>{
+  const was=window.fcGA;window.fcConsent=v;
+  try{localStorage.setItem('fc_consent',v)}catch(e){}
+  consentBox.hidden=true;
+  window.fcTrack('consent_'+(v==='yes'?'accepted':'declined'));
+  if(v==='yes'){window.fcLoadGA()}
+  else if(was){document.cookie.split(';').map(c=>c.split('=')[0].trim()).filter(n=>/^_ga/.test(n)).forEach(n=>{const d=location.hostname.split('.').slice(-2).join('.');document.cookie=n+'=;max-age=0;path=/';document.cookie=n+'=;max-age=0;path=/;domain=.'+d});setTimeout(()=>location.reload(),300);return}
+  setDisclosure();setTimeout(refresh,1200);
+};
+$('consentYes').addEventListener('click',()=>answer('yes'));
+$('consentNo').addEventListener('click',()=>answer('no'));
+$('cookieSettings').addEventListener('click',()=>{
+  if(window.fcOptOut){$('disclosure').textContent='Your browser sends Global Privacy Control or Do Not Track, so Google Analytics stays off. Turn that off in your browser to choose here.';return}
+  consentBox.hidden=false;$('consentYes').focus();
+});
+if(!window.fcConsent){setTimeout(()=>{consentBox.hidden=false},S.reduced?0:1500)}
+setDisclosure();
 
 /* live watch */
 const t0=performance.now();let dist=0,lx=null,ly=null,tabs=0;
