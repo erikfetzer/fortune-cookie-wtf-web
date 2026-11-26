@@ -140,6 +140,8 @@ textarea{width:100%;min-height:120px;font:16px "Work Sans",sans-serif;padding:12
 footer{background:var(--night);color:var(--muted);font-size:14px}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 .lvl3{background:var(--deep)}
+.trust{margin:0 0 20px;padding:14px 16px;border-left:4px solid var(--gold);background:#00000026;border-radius:0 8px 8px 0;font-size:15px;color:var(--ink)}
+.trust b{color:var(--gold)}
 .lvl3 .cols{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
 .feats{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:14px}
 .feats li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start}
@@ -292,7 +294,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
   <div class="wrap">
     <div class="head">
       <h2>Level 3: the cookie jar</h2>
-      <p>A website can only read its own cookies. A browser extension, with your permission, can read all of them. So we built one.</p>
+      <p>A website can only read its own cookies. A browser extension, with your permission, can read all of them. So we built one, so you can see what everyone else already sees.</p>
     </div>
     <div class="cols">
       <div>
@@ -304,6 +306,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
           <li><span class="ic">4</span><div><b>Throw out the tracker cookies</b><span>One tap clears cookies from tracking companies. Your logins stay put.</span></div></li>
           <li><span class="ic">5</span><div><b>Nothing leaves your computer</b><span>No account, no server, no analytics. It asks for access only when you tap "Open the jar," and tells you why Chrome's warning sounds scary.</span></div></li>
         </ul>
+        <p class="trust"><b>A quick word about trusting us.</b> You're about to let a website with ".wtf" in its name read every cookie in your browser. That is exactly the kind of thing this site warns you about. We promise we're the good guys, which is also exactly what the bad guys say. So don't take our word for it: every line of code ships inside the extension, nothing gets sent anywhere, and you can uninstall it the second it gets weird. Trust, but verify. Mostly verify.</p>
         <div class="soon">
           <span class="btn" aria-disabled="true">Coming soon to Chrome and Firefox</span>
           <span class="pill">In testing now</span>
