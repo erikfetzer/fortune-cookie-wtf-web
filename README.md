@@ -6,7 +6,10 @@ Crack open a fortune cookie and it tells you what you want, using only what your
 
 - `index.html`: the whole site (no build step)
 - `api/whereami.js`: Vercel function that returns the city Vercel derives from the visitor's IP; nothing is stored
-- `sw.js`, `manifest.webmanifest`, `icon.svg`: PWA shell (installable, works offline)
+- `sw.js`, `manifest.webmanifest`, `icon.svg` + PNG icons: PWA shell (installable, works offline)
+- `og.jpg`: 1200×630 share card
+
+Analytics: Vercel Web Analytics plus Google Analytics (G-YKXXT2EPX8). GA is skipped when the browser sends GPC or Do Not Track. Custom events: cookie_cracked, another_cookie, slip_flipped, fortune_shared, ad_profile_read, sample_profile.
 
 ## Sections
 

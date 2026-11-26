@@ -9,9 +9,20 @@
 <meta property="og:title" content="fortunecookie.wtf">
 <meta property="og:description" content="Open the cookie. It already knows what you want.">
 <meta property="og:url" content="https://fortunecookie.wtf">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="fortunecookie.wtf">
+<meta property="og:image" content="https://fortunecookie.wtf/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A cracked fortune cookie. The slip reads: You want to know what your browser has been telling everyone.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="fortunecookie.wtf">
+<meta name="twitter:description" content="Open the cookie. It already knows what you want.">
+<meta name="twitter:image" content="https://fortunecookie.wtf/og.jpg">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/icon.svg">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script>
 /* Vercel Web Analytics (cookieless) */
 window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};
@@ -166,7 +177,8 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
       <button class="btn crackbtn" id="crack" type="button">Crack it open</button>
     </div>
     <div class="after">
-      <button class="btn" id="another" type="button">Another cookie</button>
+      <button class="btn" id="share" type="button">Share my fortune</button>
+      <button class="btn ghost" id="another" type="button">Another cookie</button>
       <a class="btn ghost" href="#reading">How did it know?</a>
     </div>
   </div>
@@ -362,6 +374,13 @@ const crack=()=>{if(!stage.classList.contains('cracked')){stage.classList.remove
 $('crack').addEventListener('click',crack);
 $('cookie').addEventListener('click',crack);
 $('cookie').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();crack()}});
+$('share').addEventListener('click',async()=>{
+  const b=$('share'),text=`My fortune cookie says: "${txt(main)}" What does yours know about you?`,url='https://fortunecookie.wtf';
+  window.fcTrack&&fcTrack('fortune_shared');
+  try{if(navigator.share){await navigator.share({title:'fortunecookie.wtf',text,url});return}}catch(e){if(e&&e.name==='AbortError')return}
+  try{await navigator.clipboard.writeText(text+' '+url);b.textContent='Copied, go paste it'}catch(e){b.textContent='fortunecookie.wtf'}
+  setTimeout(()=>{b.textContent='Share my fortune'},2500);
+});
 $('another').addEventListener('click',()=>{
   stage.classList.remove('cracked');stage.classList.add('whole');
   pick(true);renderSlip();renderDeck();window.fcTrack&&fcTrack('another_cookie');

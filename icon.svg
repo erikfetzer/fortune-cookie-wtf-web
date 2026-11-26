@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="d" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c56a"/><stop offset=".55" stop-color="#e9a646"/><stop offset="1" stop-color="#b8742a"/></linearGradient>
+    <linearGradient id="d" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9cd74"/><stop offset=".55" stop-color="#e9a646"/><stop offset="1" stop-color="#b8742a"/></linearGradient>
   </defs>
-  <rect width="512" height="512" fill="#b3121f"/>
-  <path d="M256 130 C190 122 118 160 104 222 C94 268 132 306 186 300 C222 296 246 274 256 248 C266 274 290 296 326 300 C380 306 418 268 408 222 C394 160 322 122 256 130 Z" fill="url(#d)"/>
-  <path d="M256 248 C246 272 220 290 186 290 C156 290 140 270 146 248 C176 262 226 262 256 232 C286 262 336 262 366 248 C372 270 356 290 326 290 C292 290 266 272 256 248 Z" fill="#9a5a1c" opacity=".8"/>
-  <rect x="150" y="318" width="212" height="54" rx="4" fill="#fffdf8"/>
-  <text x="256" y="354" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-weight="700" font-size="30" fill="#c8102e">.wtf</text>
+  <rect width="512" height="512" rx="112" fill="#b3121f"/>
+  <path d="M256 104 C176 94 86 140 70 220 C58 284 104 334 172 326 C214 321 244 296 256 264 C268 296 298 321 340 326 C408 334 454 284 442 220 C426 140 336 94 256 104 Z" fill="url(#d)"/>
+  <path d="M256 264 C244 294 212 316 170 314 C132 312 110 288 116 260 C156 280 222 278 256 240 C290 278 356 280 396 260 C402 288 380 312 342 314 C300 316 268 294 256 264 Z" fill="#9a5a1c" opacity=".85"/>
+  <path d="M232 120 C170 124 112 160 96 214" fill="none" stroke="#fff3cf" stroke-width="16" stroke-linecap="round" opacity=".5"/>
+  <g transform="rotate(24 256 262)"><rect x="236" y="246" width="210" height="44" rx="5" fill="#fffdf8"/><rect x="290" y="262" width="120" height="11" rx="5.5" fill="#c8102e"/></g>
 </svg>
